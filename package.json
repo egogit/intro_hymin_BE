@@ -1,0 +1,16 @@
+{
+  "name": "intro_hymin_be",
+  "version": "1.0.0",
+  "description": "자기소개(이력서) 페이지 Back-end with docker",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
