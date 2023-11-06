@@ -1,5 +1,5 @@
 const maria = require('mariadb');
-const initQuery = require('../query/initDBQuery');
+const [createInitTable, insertInitData] = require('../query/initDBQuery');
 require('dotenv').config();
 
 const pool = maria.createPool({
@@ -10,19 +10,13 @@ const pool = maria.createPool({
     database: process.env.DB_DATABASE
 })
 
-async function doesTableExist(tableName){
-    const conn = await pool.getConnection();
-    const result = await conn.query(`SHOW TABLES LIKE ${tableName}`);
-    return result.length > 0;
-}
-
 async function setInitTable(){
-    for(let table of initQuery){
-        if(!(await doesTableExist(table))){
-            const conn = await pool.getConnection();
-            await conn.query(initQuery[table])
-        }
+    const conn = await pool.getConnection();
+    for(let table of Object.keys(createInitTable)){
+            await conn.query(createInitTable[table])
+            await conn.query(insertInitData[table])
     }
+    await conn.release();
 }
 
 module.exports = [pool, setInitTable];
