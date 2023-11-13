@@ -9,5 +9,6 @@ router.get('/experience', userController.getExperience);
 router.get('/education', userController.getEducation);
 router.get('/certificate', userController.getCertificate);
 router.get('/project', userController.getProject);
+router.get('/extracurriculum', userController.getExtracurriculum);
 
 module.exports = router;
