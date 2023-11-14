@@ -1,4 +1,4 @@
-const pool = require('../db/connect/maria');
+const [pool, _] = require('../db/connect/maria');
 const [createInitTable, insertInitData] = require('../db/query/initDBQuery');
 
 async function setInitDB(){

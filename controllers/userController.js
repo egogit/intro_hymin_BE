@@ -1,4 +1,4 @@
-const pool = require('../db/connect/maria');
+const [pool, _] = require('../db/connect/maria');
 const {formatTerm, formatDate} = require('../utils/dateUtils')
 
 const getUserInfo = async(req, res) => {

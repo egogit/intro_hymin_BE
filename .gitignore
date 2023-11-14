@@ -3,3 +3,4 @@ node_modules
 .env
 ./db/query/*.js
 .gitignore
+db/query/initDBQuery.js
