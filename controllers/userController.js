@@ -19,6 +19,26 @@ const getUserInfo = async(req, res) => {
     }
 }
 
+const updateUserInfo = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    const intro = req.body.intro;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'UPDATE user set intro=(?) WHERE uid=(?)', [intro, id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
 const getSkill = async(req, res) => {
     let conn;
     try{
@@ -30,6 +50,27 @@ const getSkill = async(req, res) => {
     }catch(err){
         console.error(err);
 
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
+const updateSkill = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    const name = req.body.name;
+    const degree = req.body.degree;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'UPDATE skill set name=(?), degree=(?) WHERE id=(?)', [name, degree, id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
         if(conn){
             await conn.release();
         }
@@ -54,18 +95,66 @@ const getInterests = async(req, res) => {
     }
 }
 
+const updateInterests = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    const name = req.body.name;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'UPDATE interests set name=(?) WHERE id=(?)', [name, id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
 const getExperience = async(req, res) => {
     let conn;
     try{
         conn = await pool.getConnection();
         const result = await conn.query(
-            'SELECT A.id id, A.type type, A.name name, A.location location, A.startDate startDate, A.endDate endDate, B.content content' +
+            'SELECT A.id id, A.type type, A.name name, A.location location, A.startDate startDate, A.endDate endDate, B.content content, B.id expContentId' +
             ' FROM experience A JOIN expContent B ON A.id = B.expId');
         result.map((exp) => {
             exp['term'] = formatTerm(exp['startDate'],exp['endDate'])
         })
         await conn.release();
         return res.send(result);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
+const updateExperience = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    const type = req.body.type;
+    const name = req.body.id;
+    const location = req.body.location;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const content = req.body.content;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'UPDATE experience set type=(?), name=(?), location=(?), startDate=(?), endDate=(?) WHERE id=(?)', [type, name, location, startDate, endDate, id]);
+        const result1 = await conn.query(
+            'UPDATE expContent set content=(?) WHERE expId=(?)',[content, id]
+        )
+        let msg = result && result1 ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
     }catch(err){
         console.error(err);
         if(conn){
@@ -159,9 +248,13 @@ const getExtracurriculum = async(req, res) => {
 
 module.exports = {
     getUserInfo,
+    updateUserInfo,
     getSkill,
+    updateSkill,
     getInterests,
+    updateInterests,
     getExperience,
+    updateExperience,
     getEducation,
     getCertificate,
     getProject,

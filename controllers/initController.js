@@ -5,7 +5,9 @@ async function setInitDB(){
     const conn = await pool.getConnection();
     for(let table of Object.keys(createInitTable)){
         await conn.query(createInitTable[table])
-        await conn.query(insertInitData[table])
+        await conn.query(insertInitData[table]).catch((err) => {
+
+        })
     }
     await conn.release();
 }

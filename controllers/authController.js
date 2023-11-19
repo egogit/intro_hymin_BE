@@ -1,4 +1,8 @@
 const [pool, _] = require('../db/connect/maria');
+const redis = require("redis");
+const redisClient = redis.createClient( {
+    url: "redis://localhost:6379"});
+redisClient.connect().catch(console.error);
 
 const login = async(req, res) => {
     let conn;
@@ -20,14 +24,12 @@ const login = async(req, res) => {
             let msg = '';
 
             if(loginSuccess){
-                msg = JSON.stringify({'status': 'success', 'msg': '로그인 되었습니다.'});
-                req.session.id = id;
-                res.setHeader('Set-Cookie',req.session.id);
+                await redisClient.set('admin', 1);
+                res.send({msg: 'success'})
             }else{
-                msg = JSON.stringify({'status': 'err', 'msg': '다시 로그인해주세요.'});
+                res.send({msg: 'fail'})
             }
             await conn.release();
-            res.send(msg);
         }catch(err){
             console.error(err);
 
@@ -39,24 +41,21 @@ const login = async(req, res) => {
     }
 }
 
-const checkSession = async(req, res) => {
-    let msg = "";
-    if(req.session.id){
-        msg = JSON.stringify({'status': 'success'});
+const checkSession = async (req, res) => {
+    if(parseInt(await redisClient.get("admin"))){
+        res.send({status: "success"})
+    }else{
+        res.send({status: "fail"});
     }
-    else{
-        msg = JSON.stringify({'status': 'fail'});
-    }
-    return res.send(msg);
 }
 
 const logout = async(req, res) => {
     let msg = ""
-    if(req.session.id){
-        req.session.destroy(() =>{});
-        msg = JSON.stringify({'status': 'success'});
+    if(await redisClient.get("admin")){
+        await redisClient.set("admin",0)
+        msg = {status: "success"}
     }else{
-        msg = JSON.stringify({'status': 'fail'});
+        msg = {status: "fail"}
     }
     return res.send(msg);
 }

@@ -1,27 +1,41 @@
 const express = require('express');
 const cors = require('cors');
 const [_, options] = require('./db/connect/maria');
-const routes = require('./routes');
-
-const session = require('express-session');
-const Memorystore = require('memorystore')(session);
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const redis = require('redis');
+const RedisStore = require("connect-redis").default;
 
+
+const redisClient = redis.createClient( {
+    url: "redis://localhost:6379",
+    maxAge: 60000,});
+redisClient.connect().catch(console.error);
+
+const redisStore = new RedisStore({
+    client: redisClient,
+});
 require('dotenv').config();
 
+
+const routes = require('./routes');
 
 const app = express();
 app.set('port', process.env.PORT || 8080);
 
-app.use(cors());
+app.use(cors({origin:'*'}));
 app.use(express.json());
-app.use(cookieParser(process.env.COOKIE_SECRET))
+app.use(cookieParser())
 app.use(session({
-    secret:process.env.COOKIE_SECRET,
+    key: 'sessionKey',
     resave: false,
-    saveUninitialized: true,
-    store: new Memorystore({checkPeriod: 60000}),
-    cookie: {maxAge: 60000},
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET,
+    store: redisStore,
+    cookie: {
+        secure: false,
+        maxAge: 60000,
+    },
 }))
 app.use(express.urlencoded({extended: false}));
 app.use(routes);
