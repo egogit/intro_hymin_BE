@@ -26,7 +26,7 @@ const updateUserInfo = async(req, res) => {
     try{
         conn = await pool.getConnection();
         const result = await conn.query(
-            'UPDATE user set intro=(?) WHERE uid=(?)', [intro, id]);
+            'UPDATE user set intro=(?) WHERE id=(?)', [intro, id]);
         let msg = result ? {status: "success"} : {status: "fail"};
         await conn.release();
         return res.send(msg);
@@ -185,6 +185,36 @@ const getEducation = async(req, res) => {
 }
 
 
+const updateEducation = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    const major = req.body.major;
+    const type = req.body.type;
+    const degree = req.body.degree;
+    const school = req.body.school;
+    const GPA = req.body.GPA;
+    const relatedSubject = req.body.relatedSubject;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'UPDATE education set major=(?) type=(?) degree=(?) school=(?)' +
+            'GPA=(?) relatedSubject=(?) startDate=(?) endDate=(?) WHERE id=(?)'
+            , [major, type, degree, school, GPA, relatedSubject, startDate, endDate, id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
+
 const getCertificate = async(req, res) => {
     let conn;
     try{
@@ -196,6 +226,28 @@ const getCertificate = async(req, res) => {
         })
         await conn.release();
         return res.send(result);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
+const updateCertificate = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    const name = req.body.name;
+    const organization = req.body.organization;
+    const acqDate = req.body.acqDate;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'UPDATE certificate set name=(?), organization=(?), acqDate=(?) WHERE id=(?)', [name, organization, acqDate, id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
     }catch(err){
         console.error(err);
         if(conn){
@@ -225,6 +277,34 @@ const getProject = async(req, res) => {
     }
 }
 
+const updateProject = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    const name = req.body.name;
+    const stack = req.body.stack;
+    const content = req.body.content;
+    const contribution = req.body.contribution;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'UPDATE project set name=(?), stack=(?), content=(?) contribution=(?) startDate=(?) endDate=(?) WHERE id=(?)'
+            , [name, stack, content, contribution, startDate, endDate, id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
+
+
 const getExtracurriculum = async(req, res) => {
     let conn;
     try{
@@ -245,6 +325,30 @@ const getExtracurriculum = async(req, res) => {
     }
 }
 
+const updateExtracurriculum = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    const name = req.body.name;
+    const content = req.body.content;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'UPDATE project set name=(?), content=(?) startDate=(?) endDate=(?) WHERE id=(?)'
+            , [name, content, startDate, endDate, id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
 
 module.exports = {
     getUserInfo,
@@ -256,7 +360,11 @@ module.exports = {
     getExperience,
     updateExperience,
     getEducation,
+    updateEducation,
     getCertificate,
+    updateCertificate,
     getProject,
-    getExtracurriculum
+    updateProject,
+    getExtracurriculum,
+    updateExtracurriculum,
 };
