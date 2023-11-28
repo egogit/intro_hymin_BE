@@ -140,17 +140,16 @@ const updateExperience = async(req, res) => {
     let conn;
     const id = req.body.id;
     const type = req.body.type;
-    const name = req.body.id;
+    const name = req.body.name;
     const location = req.body.location;
-    const startDate = req.body.startDate;
-    const endDate = req.body.endDate;
     const content = req.body.content;
+    const expContentId = req.body.expContentId;
     try{
         conn = await pool.getConnection();
         const result = await conn.query(
-            'UPDATE experience set type=(?), name=(?), location=(?), startDate=(?), endDate=(?) WHERE id=(?)', [type, name, location, startDate, endDate, id]);
+            `UPDATE experience set type=(?), name=(?), location=(?) WHERE id=(?)`, [type, name, location, id]);
         const result1 = await conn.query(
-            'UPDATE expContent set content=(?) WHERE expId=(?)',[content, id]
+            'UPDATE expContent set content=(?) WHERE expId=(?)',[content, expContentId]
         )
         let msg = result && result1 ? {status: "success"} : {status: "fail"};
         await conn.release();
@@ -189,19 +188,17 @@ const updateEducation = async(req, res) => {
     let conn;
     const id = req.body.id;
     const major = req.body.major;
-    const type = req.body.type;
+    const minor = req.body.type;
     const degree = req.body.degree;
     const school = req.body.school;
     const GPA = req.body.GPA;
     const relatedSubject = req.body.relatedSubject;
-    const startDate = req.body.startDate;
-    const endDate = req.body.endDate;
+
     try{
         conn = await pool.getConnection();
         const result = await conn.query(
-            'UPDATE education set major=(?) type=(?) degree=(?) school=(?)' +
-            'GPA=(?) relatedSubject=(?) startDate=(?) endDate=(?) WHERE id=(?)'
-            , [major, type, degree, school, GPA, relatedSubject, startDate, endDate, id]);
+            'UPDATE education set major=(?), minor=(?), degree=(?), school=(?), GPA=(?), relatedSubject=(?) WHERE id=(?)'
+            , [major, minor, degree, school, GPA, relatedSubject, id]);
         let msg = result ? {status: "success"} : {status: "fail"};
         await conn.release();
         return res.send(msg);
@@ -240,11 +237,10 @@ const updateCertificate = async(req, res) => {
     const id = req.body.id;
     const name = req.body.name;
     const organization = req.body.organization;
-    const acqDate = req.body.acqDate;
     try{
         conn = await pool.getConnection();
         const result = await conn.query(
-            'UPDATE certificate set name=(?), organization=(?), acqDate=(?) WHERE id=(?)', [name, organization, acqDate, id]);
+            'UPDATE certificate set name=(?), organization=(?) WHERE id=(?)', [name, organization, id]);
         let msg = result ? {status: "success"} : {status: "fail"};
         await conn.release();
         return res.send(msg);
@@ -284,13 +280,11 @@ const updateProject = async(req, res) => {
     const stack = req.body.stack;
     const content = req.body.content;
     const contribution = req.body.contribution;
-    const startDate = req.body.startDate;
-    const endDate = req.body.endDate;
     try{
         conn = await pool.getConnection();
         const result = await conn.query(
-            'UPDATE project set name=(?), stack=(?), content=(?) contribution=(?) startDate=(?) endDate=(?) WHERE id=(?)'
-            , [name, stack, content, contribution, startDate, endDate, id]);
+            'UPDATE project set name=(?), stack=(?), content=(?) contribution=(?) WHERE id=(?)'
+            , [name, stack, content, contribution, id]);
         let msg = result ? {status: "success"} : {status: "fail"};
         await conn.release();
         return res.send(msg);
@@ -330,13 +324,11 @@ const updateExtracurriculum = async(req, res) => {
     const id = req.body.id;
     const name = req.body.name;
     const content = req.body.content;
-    const startDate = req.body.startDate;
-    const endDate = req.body.endDate;
     try{
         conn = await pool.getConnection();
         const result = await conn.query(
-            'UPDATE project set name=(?), content=(?) startDate=(?) endDate=(?) WHERE id=(?)'
-            , [name, content, startDate, endDate, id]);
+            'UPDATE project set name=(?), content=(?) WHERE id=(?)'
+            , [name, content, id]);
         let msg = result ? {status: "success"} : {status: "fail"};
         await conn.release();
         return res.send(msg);
