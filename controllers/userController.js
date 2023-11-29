@@ -283,7 +283,7 @@ const updateProject = async(req, res) => {
     try{
         conn = await pool.getConnection();
         const result = await conn.query(
-            'UPDATE project set name=(?), stack=(?), content=(?) contribution=(?) WHERE id=(?)'
+            'UPDATE project set name=(?), stack=(?), content=(?), contribution=(?) WHERE id=(?)'
             , [name, stack, content, contribution, id]);
         let msg = result ? {status: "success"} : {status: "fail"};
         await conn.release();
@@ -327,7 +327,7 @@ const updateExtracurriculum = async(req, res) => {
     try{
         conn = await pool.getConnection();
         const result = await conn.query(
-            'UPDATE project set name=(?), content=(?) WHERE id=(?)'
+            'UPDATE extracurriculum set name=(?), content=(?) WHERE id=(?)'
             , [name, content, id]);
         let msg = result ? {status: "success"} : {status: "fail"};
         await conn.release();
