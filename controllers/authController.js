@@ -19,17 +19,17 @@ const login = async(req, res) => {
             conn = await pool.getConnection();
             const result = await conn.query(
                 'SELECT * FROM user WHERE uid=(?) and pw=(?)',[id, pw]);
-
             const loginSuccess = result.length > 0;
             let msg = '';
 
             if(loginSuccess){
-                await redisClient.set('admin', 1);
-                res.send({msg: 'success'})
+                req.session.userid = result[0].uid;
+                await redisClient.set(result[0].uid, "1");
+                res.send({"status": 'success'});
             }else{
-                res.send({msg: 'fail'})
+                await redisClient.set(result[0].uid, "0");
+                res.send({"status": 'login failure'})
             }
-            await conn.release();
         }catch(err){
             console.error(err);
 
@@ -42,22 +42,22 @@ const login = async(req, res) => {
 }
 
 const checkSession = async (req, res) => {
-    if(parseInt(await redisClient.get("admin"))){
+    const sessionExists = await redisClient.get("admin");
+    if(parseInt(sessionExists)){
         res.send({status: "success"})
     }else{
-        res.send({status: "fail"});
+        res.send({status: "no session"});
     }
 }
 
 const logout = async(req, res) => {
-    let msg = ""
-    if(await redisClient.get("admin")){
-        await redisClient.set("admin",0)
-        msg = {status: "success"}
+    const sessionExists = await redisClient.get("admin");
+    if(parseInt(sessionExists)){
+        redisClient.del("admin");
+        res.send({status: "success"})
     }else{
-        msg = {status: "fail"}
+        res.status(400).send({status: "logout: no session"});
     }
-    return res.send(msg);
 }
 
 module.exports = {

@@ -25,23 +25,22 @@ app.set('port', process.env.PORT || 8080);
 
 app.use(cors({origin:'*'}));
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(session({
-    key: 'sessionKey',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     secret: process.env.COOKIE_SECRET,
     store: redisStore,
     cookie: {
         secure: false,
-        maxAge: 60000,
+        httpOnly: false,
+        maxAge: 600000,
     },
 }))
 app.use(express.urlencoded({extended: false}));
 app.use(routes);
 
 app.get('/', (req, res) => {
-    console.log(req.session)
     res.send('Hello Express!')
 })
 
