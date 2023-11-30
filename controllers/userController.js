@@ -80,6 +80,25 @@ const updateSkill = async(req, res) => {
     }
 }
 
+const deleteSkill = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+                'DELETE FROM skill WHERE id=(?)', [id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
 const getInterests = async(req, res) => {
     let conn;
     try{
@@ -107,6 +126,25 @@ const updateInterests = async(req, res) => {
                 'UPDATE interests set name=(?) WHERE id=(?)', [name, id])
             : await conn.query(
                 'Insert INTO interests(name) VALUES(?)', [name]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
+const deleteInterests = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'DELETE FROM interests WHERE id=(?)', [id]);
         let msg = result ? {status: "success"} : {status: "fail"};
         await conn.release();
         return res.send(msg);
@@ -156,7 +194,7 @@ const updateExperience = async(req, res) => {
             result = await conn.query(
                 `UPDATE experience set type=(?), name=(?), location=(?) WHERE id=(?)`, [type, name, location, id]);
             result1 = await conn.query(
-                'UPDATE expContent set content=(?) WHERE expId=(?)',[content, id])
+                'UPDATE expContent set content=(?) WHERE id=(?)',[content, expContentId])
         }
         else{
             result = await conn.query('Insert INTO experience(type, name, location) VALUES(?,?,?)', [type, name, location])
@@ -167,6 +205,26 @@ const updateExperience = async(req, res) => {
         }
 
         let msg = result && result1 ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
+const deleteExperience = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    console.log(id);
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'DELETE FROM experience WHERE id=(?)', [id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
         await conn.release();
         return res.send(msg);
     }catch(err){
@@ -229,6 +287,24 @@ const updateEducation = async(req, res) => {
     }
 }
 
+const deleteEducation = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'DELETE FROM education WHERE id=(?)', [id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
 
 const getCertificate = async(req, res) => {
     let conn;
@@ -261,6 +337,25 @@ const updateCertificate = async(req, res) => {
             'UPDATE certificate set name=(?), organization=(?) WHERE id=(?)', [name, organization, id])
             : await conn.query(
                 'Insert INTO certificate(name, organization) VALUES(?,?)', [name, organization]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
+const deleteCertificate = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'DELETE FROM certificate WHERE id=(?)', [id]);
         let msg = result ? {status: "success"} : {status: "fail"};
         await conn.release();
         return res.send(msg);
@@ -321,6 +416,24 @@ const updateProject = async(req, res) => {
     }
 }
 
+const deleteProject = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'DELETE FROM project WHERE id=(?)', [id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
 
 
 const getExtracurriculum = async(req, res) => {
@@ -368,22 +481,48 @@ const updateExtracurriculum = async(req, res) => {
     }
 }
 
+const deleteExtracurriculum = async(req, res) => {
+    let conn;
+    const id = req.body.id;
+    try{
+        conn = await pool.getConnection();
+        const result = await conn.query(
+            'DELETE FROM extracurriculum WHERE id=(?)', [id]);
+        let msg = result ? {status: "success"} : {status: "fail"};
+        await conn.release();
+        return res.send(msg);
+    }catch(err){
+        console.error(err);
+        if(conn){
+            await conn.release();
+        }
+        return res.status(500).send(err);
+    }
+}
+
 
 module.exports = {
     getUserInfo,
     updateUserInfo,
     getSkill,
     updateSkill,
+    deleteSkill,
     getInterests,
     updateInterests,
+    deleteInterests,
     getExperience,
     updateExperience,
+    deleteExperience,
     getEducation,
     updateEducation,
+    deleteEducation,
     getCertificate,
     updateCertificate,
+    deleteCertificate,
     getProject,
     updateProject,
+    deleteProject,
     getExtracurriculum,
     updateExtracurriculum,
+    deleteExtracurriculum,
 };
