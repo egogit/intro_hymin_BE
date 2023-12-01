@@ -163,7 +163,7 @@ const getExperience = async(req, res) => {
         conn = await pool.getConnection();
         const result = await conn.query(
             'SELECT A.id id, A.type type, A.name name, A.location location, A.startDate startDate, A.endDate endDate, B.content content, B.id expContentId' +
-            ' FROM experience A JOIN expContent B ON A.id = B.expId');
+            ' FROM experience A JOIN expcontent B ON A.id = B.expId');
         result.map((exp) => {
             exp['term'] = formatTerm(exp['startDate'],exp['endDate'])
         })
@@ -194,13 +194,13 @@ const updateExperience = async(req, res) => {
             result = await conn.query(
                 `UPDATE experience set type=(?), name=(?), location=(?) WHERE id=(?)`, [type, name, location, id]);
             result1 = await conn.query(
-                'UPDATE expContent set content=(?) WHERE id=(?)',[content, expContentId])
+                'UPDATE expcontent set content=(?) WHERE id=(?)',[content, expContentId])
         }
         else{
             result = await conn.query('Insert INTO experience(type, name, location) VALUES(?,?,?)', [type, name, location])
             const lastInsertId = result.insertId;
             result1 = conn.query(
-                'Insert INTO expContent(content, expId) VALUES(?,?)', [content, lastInsertId]);
+                'Insert INTO expcontent(content, expId) VALUES(?,?)', [content, lastInsertId]);
 
         }
 
