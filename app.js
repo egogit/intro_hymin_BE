@@ -8,7 +8,7 @@ const RedisStore = require("connect-redis").default;
 
 
 const redisClient = redis.createClient( {
-    url: "redis://localhost:6379",
+    url: "redis://myredis:6379", // local: redis://localhost:6379
     maxAge: 60000,});
 redisClient.connect().catch(console.error);
 
